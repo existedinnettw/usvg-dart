@@ -46,7 +46,10 @@ jobs:
           restore-keys: pub-${{ runner.os }}-
 
       - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.94.1
+          components: rustfmt
 
       - name: Cache Rust dependencies and build artifacts
         uses: Swatinem/rust-cache@v2
@@ -103,7 +106,7 @@ jobs:
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: nightly-2026-06-04
-          components: rust-src
+          components: rust-src, rustfmt
           targets: wasm32-unknown-unknown
 
       - name: Cache Rust dependencies, tools, and build artifacts
