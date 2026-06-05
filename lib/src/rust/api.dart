@@ -11,14 +11,17 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<SvgTree>>
 abstract class SvgTree implements RustOpaqueInterface {
+  /// Returns whether the normalized tree contains no renderable nodes.
   bool get isEmpty;
 
+  /// Parses SVG text into a normalized tree.
   static Future<SvgTree> parse({required String svg, ParseOptions? options}) =>
       UsvgRustLibGenerated.instance.api.crateApiSvgTreeParse(
         svg: svg,
         options: options,
       );
 
+  /// Parses SVG bytes into a normalized tree.
   static Future<SvgTree> parseBytes({
     required List<int> data,
     ParseOptions? options,
@@ -27,17 +30,31 @@ abstract class SvgTree implements RustOpaqueInterface {
     options: options,
   );
 
+  /// Returns the intrinsic size of the root SVG.
   SvgSize get size;
 
+  /// Serializes the normalized tree as SVG text.
   Future<String> toSvgString();
 }
 
+/// Options controlling how usvg parses and resolves an SVG document.
 class ParseOptions {
+  /// Directory used to resolve relative resource paths.
   final String? resourcesDir;
+
+  /// Resolution used to convert physical units into pixels.
   final double dpi;
+
+  /// Default font family used when an SVG does not specify one.
   final String fontFamily;
+
+  /// Default font size used when an SVG does not specify one.
   final double fontSize;
+
+  /// Preferred languages used to resolve conditional SVG content.
   final List<String> languages;
+
+  /// Additional CSS applied while parsing the SVG.
   final String? styleSheet;
 
   const ParseOptions({
@@ -74,8 +91,12 @@ class ParseOptions {
           styleSheet == other.styleSheet;
 }
 
+/// The intrinsic dimensions of a parsed SVG tree.
 class SvgSize {
+  /// Width in SVG user units.
   final double width;
+
+  /// Height in SVG user units.
   final double height;
 
   const SvgSize({required this.width, required this.height});

@@ -1,5 +1,5 @@
 name: usvg_dart
-description: Dart bindings for usvg using flutter_rust_bridge.
+description: Normalize complex, standards-compliant SVG into a simpler form for Dart and Flutter renderers using usvg.
 version: 1.0.1
 repository: https://github.com/existedinnettw/usvg-dart
 
