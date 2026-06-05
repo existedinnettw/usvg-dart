@@ -1,8 +1,10 @@
 name: CI
 
 on:
-  push:
   pull_request:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -63,14 +65,14 @@ jobs:
       - name: Get Dart dependencies
         run: dart pub get
 
+      - name: Run tests
+        run: dart test
+
       - name: Generate Dart bindings
         run: flutter_rust_bridge_codegen generate
 
       - name: Verify generated bindings are committed
         run: git diff --exit-code -- lib/src/rust rust/src/frb_generated.rs
-
-      - name: Run tests
-        run: dart test
 
       - name: Verify publish archive
         if: runner.os == 'Linux'
@@ -123,9 +125,6 @@ jobs:
 
       - name: Get Dart dependencies
         run: dart pub get
-
-      - name: Generate Dart bindings
-        run: flutter_rust_bridge_codegen generate
 
       - name: Build WebAssembly library
         run: >-
