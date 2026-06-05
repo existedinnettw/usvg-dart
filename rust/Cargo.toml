@@ -9,7 +9,13 @@ crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
 flutter_rust_bridge = "=2.12.0"
-usvg = { path = "../../resvg/crates/usvg" }
+usvg = "=0.47.0"
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2.178"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_System_LibraryLoader"] }
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ["cfg(frb_expand)"] }
