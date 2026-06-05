@@ -53,10 +53,11 @@ jobs:
       - name: Create draft release
         env:
           GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
           TAG: ${{ github.ref_name }}
         run: |
           args=("$TAG" --draft --generate-notes --verify-tag)
           if [[ "$TAG" == *-* ]]; then
             args+=(--prerelease)
           fi
-          gh release create "${args[@]}"
+          gh release create "${args[@]}" --repo "$REPOSITORY"
