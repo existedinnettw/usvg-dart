@@ -783,12 +783,15 @@ class SvgTreeImpl extends RustOpaque implements SvgTree {
         .rust_arc_decrement_strong_count_SvgTreePtr,
   );
 
+  /// Returns whether the normalized tree contains no renderable nodes.
   bool get isEmpty =>
       UsvgRustLibGenerated.instance.api.crateApiSvgTreeIsEmpty(that: this);
 
+  /// Returns the intrinsic size of the root SVG.
   SvgSize get size =>
       UsvgRustLibGenerated.instance.api.crateApiSvgTreeSize(that: this);
 
+  /// Serializes the normalized tree as SVG text.
   Future<String> toSvgString() =>
       UsvgRustLibGenerated.instance.api.crateApiSvgTreeToSvgString(that: this);
 }

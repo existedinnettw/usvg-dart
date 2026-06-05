@@ -3,12 +3,19 @@ use std::path::PathBuf;
 use flutter_rust_bridge::frb;
 
 #[derive(Clone, Debug)]
+/// Options controlling how usvg parses and resolves an SVG document.
 pub struct ParseOptions {
+    /// Directory used to resolve relative resource paths.
     pub resources_dir: Option<String>,
+    /// Resolution used to convert physical units into pixels.
     pub dpi: f32,
+    /// Default font family used when an SVG does not specify one.
     pub font_family: String,
+    /// Default font size used when an SVG does not specify one.
     pub font_size: f32,
+    /// Preferred languages used to resolve conditional SVG content.
     pub languages: Vec<String>,
+    /// Additional CSS applied while parsing the SVG.
     pub style_sheet: Option<String>,
 }
 
@@ -26,21 +33,27 @@ impl Default for ParseOptions {
 }
 
 #[derive(Clone, Copy, Debug)]
+/// The intrinsic dimensions of a parsed SVG tree.
 pub struct SvgSize {
+    /// Width in SVG user units.
     pub width: f32,
+    /// Height in SVG user units.
     pub height: f32,
 }
 
 #[frb(opaque)]
+/// A parsed and normalized SVG document.
 pub struct SvgTree {
     tree: usvg::Tree,
 }
 
 impl SvgTree {
+    /// Parses SVG text into a normalized tree.
     pub fn parse(svg: String, options: Option<ParseOptions>) -> Result<Self, String> {
         Self::parse_bytes(svg.into_bytes(), options)
     }
 
+    /// Parses SVG bytes into a normalized tree.
     pub fn parse_bytes(data: Vec<u8>, options: Option<ParseOptions>) -> Result<Self, String> {
         let options = to_usvg_options(options.unwrap_or_default());
         usvg::Tree::from_data(&data, &options)
@@ -49,6 +62,7 @@ impl SvgTree {
     }
 
     #[frb(sync, getter)]
+    /// Returns the intrinsic size of the root SVG.
     pub fn size(&self) -> SvgSize {
         let size = self.tree.size();
         SvgSize {
@@ -58,10 +72,12 @@ impl SvgTree {
     }
 
     #[frb(sync, getter)]
+    /// Returns whether the normalized tree contains no renderable nodes.
     pub fn is_empty(&self) -> bool {
         !self.tree.root().has_children()
     }
 
+    /// Serializes the normalized tree as SVG text.
     pub fn to_svg_string(&self) -> String {
         self.tree.to_string(&usvg::WriteOptions::default())
     }
