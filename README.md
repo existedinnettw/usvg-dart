@@ -36,3 +36,7 @@ cargo build --manifest-path rust/Cargo.toml --release
 The generated loader looks for the native library in `rust/target/release/` by
 default. Call `UsvgRustLib.init(externalLibrary: ...)` to supply a packaged
 library from another location.
+
+```shell
+dart test
+```

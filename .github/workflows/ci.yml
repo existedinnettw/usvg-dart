@@ -1,0 +1,143 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PUB_CACHE: ${{ github.workspace }}/.pub-cache
+
+jobs:
+  test:
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+
+    defaults:
+      run:
+        working-directory: usvg-dart
+
+    steps:
+      - name: Check out usvg-dart
+        uses: actions/checkout@v6
+        with:
+          path: usvg-dart
+
+      - name: Check out resvg
+        uses: actions/checkout@v6
+        with:
+          repository: linebender/resvg
+          ref: fd5eab930042a85a342d25373c96eefbb44a9831
+          path: resvg
+
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: Cache Dart dependencies
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.PUB_CACHE }}
+          key: pub-${{ runner.os }}-${{ hashFiles('usvg-dart/pubspec.yaml') }}
+          restore-keys: pub-${{ runner.os }}-
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies and build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: usvg-dart/rust -> target
+          cache-all-crates: true
+
+      - name: Install flutter_rust_bridge_codegen
+        run: cargo install flutter_rust_bridge_codegen --version 2.12.0 --locked
+
+      - name: Get Dart dependencies
+        run: dart pub get
+
+      - name: Generate Dart bindings
+        run: flutter_rust_bridge_codegen generate
+
+      - name: Build native library
+        run: cargo build --manifest-path rust/Cargo.toml --release
+
+      - name: Run tests
+        run: dart test
+
+  web:
+    name: Web build
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: usvg-dart
+
+    steps:
+      - name: Check out usvg-dart
+        uses: actions/checkout@v6
+        with:
+          path: usvg-dart
+
+      - name: Check out resvg
+        uses: actions/checkout@v6
+        with:
+          repository: linebender/resvg
+          ref: fd5eab930042a85a342d25373c96eefbb44a9831
+          path: resvg
+
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 3.11.4
+
+      - name: Cache Dart dependencies
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.PUB_CACHE }}
+          key: pub-${{ runner.os }}-${{ hashFiles('usvg-dart/pubspec.yaml') }}
+          restore-keys: pub-${{ runner.os }}-
+
+      - name: Set up nightly Rust for WASM
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly-2026-06-04
+          components: rust-src
+          targets: wasm32-unknown-unknown
+
+      - name: Cache Rust dependencies, tools, and build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: usvg-dart/rust -> target
+          cache-all-crates: true
+          key: web
+
+      - name: Install web build tools
+        run: |
+          cargo install flutter_rust_bridge_codegen --version 2.12.0 --locked
+          cargo install wasm-pack --version 0.15.0 --locked
+
+      - name: Get Dart dependencies
+        run: dart pub get
+
+      - name: Generate Dart bindings
+        run: flutter_rust_bridge_codegen generate
+
+      - name: Build WebAssembly library
+        run: >-
+          flutter_rust_bridge_codegen build-web --release
+          --wasm-pack-rustup-toolchain nightly-2026-06-04
+
+      - name: Verify web build artifacts
+        run: |
+          test -f web/pkg/usvg_dart_rust.js
+          test -f web/pkg/usvg_dart_rust_bg.wasm
