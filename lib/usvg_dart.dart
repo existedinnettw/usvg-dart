@@ -1,8 +1,4 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
 library;
 
-export 'src/usvg_dart_base.dart';
-
-// TODO: Export any libraries intended for clients of this package.
+export 'src/rust/api.dart';
+export 'src/rust/frb_generated.dart' show UsvgRustLib;
