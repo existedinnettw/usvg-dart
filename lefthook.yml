@@ -1,0 +1,13 @@
+pre-commit:
+  commands:
+    format-dart:
+      glob: "*.dart"
+      run: dart format {staged_files}
+      stage_fixed: true
+    analyze-dart:
+      glob: "*.dart"
+      run: dart analyze {staged_files}
+    format-rust:
+      glob: "*.rs"
+      run: rustfmt --config skip_children=true {staged_files}
+      stage_fixed: true
