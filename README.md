@@ -38,7 +38,10 @@ The command invokes `hook/build.dart`, which builds the Rust crate for the
 requested target and bundles it as a native asset. Consumer applications can
 also use `dart run` and `dart build cli` without manually locating the library.
 
-WebAssembly remains a separate `flutter_rust_bridge_codegen build-web` flow.
+Web consumers require no asset copy step. The generated wasm-bindgen JavaScript
+and WASM binary are embedded in the package; see
+[Embedded WebAssembly assets](docs/web-wasm-assets.md) for tradeoffs and browser
+requirements.
 
 ## Publishing
 

@@ -76,7 +76,11 @@ jobs:
 
       - name: Verify publish archive
         if: runner.os == 'Linux'
-        run: dart pub publish --dry-run --ignore-warnings
+        run: |
+          output=$(dart pub publish --dry-run --ignore-warnings)
+          echo "$output"
+          echo "$output" | grep -q "lib/src/web_wasm_assets.dart"
+          ! echo "$output" | grep -q "web/pkg/usvg_dart_rust"
 
   web:
     name: Web build
@@ -107,7 +111,7 @@ jobs:
       - name: Set up nightly Rust for WASM
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: nightly-2026-06-04
+          toolchain: nightly-2025-03-01
           components: rust-src, rustfmt
           targets: wasm32-unknown-unknown
 
@@ -129,9 +133,21 @@ jobs:
       - name: Build WebAssembly library
         run: >-
           flutter_rust_bridge_codegen build-web --release
-          --wasm-pack-rustup-toolchain nightly-2026-06-04
+          --wasm-pack-rustup-toolchain nightly-2025-03-01
 
       - name: Verify web build artifacts
         run: |
           test -f web/pkg/usvg_dart_rust.js
           test -f web/pkg/usvg_dart_rust_bg.wasm
+
+      - name: Regenerate embedded WebAssembly assets
+        run: dart run scripts/generate_web_wasm_assets.dart
+
+      - name: Verify embedded WebAssembly assets are committed
+        run: git diff --exit-code -- lib/src/web_wasm_assets.dart
+
+      - name: Remove temporary web build output
+        run: rm -rf web/pkg
+
+      - name: Run browser tests without deployed web/pkg assets
+        run: dart test -p chrome test/web_initializer_test.dart
