@@ -17,14 +17,28 @@ output and is not published.
   JavaScript size.
 - Startup must decode both embedded artifacts.
 - The WASM binary cannot be cached independently from the application.
-- The browser's Content Security Policy must permit `blob:` scripts and worker
-  imports.
-- Worker-backed asynchronous calls require cross-origin isolation, normally
-  configured with `Cross-Origin-Opener-Policy: same-origin` and
-  `Cross-Origin-Embedder-Policy: require-corp`.
+- The browser's Content Security Policy must permit `blob:` scripts during
+  initialization.
 
-The wasm-bindgen JavaScript blob URL is intentionally retained after startup
-because Flutter Rust Bridge workers load it with `importScripts`.
+## Main-thread WebAssembly
+
+Web calls run synchronously on the browser's main thread. Every exported Rust
+operation is marked `#[frb(sync)]`, so Flutter Rust Bridge does not dispatch
+calls to its Web Worker pool or share WebAssembly memory between workers. The
+web build also deliberately avoids WebAssembly atomic target features.
+
+Flutter Rust Bridge 2.12.0's generated web default handler does not compile
+when its `thread-pool` Cargo feature is disabled. The feature therefore remains
+compiled as an internal dependency, but no exported operation uses it.
+
+This keeps deployment compatible with ordinary static hosting. Consumers do
+not need `Cross-Origin-Opener-Policy`, `Cross-Origin-Embedder-Policy`,
+`crossOriginIsolated`, or `SharedArrayBuffer`.
+
+The tradeoff is that parsing or serializing a sufficiently large SVG can block
+the browser UI until the call returns. If that becomes a practical problem,
+worker execution should be added as an optional integration rather than making
+cross-origin isolation mandatory for all consumers.
 
 Release builds disable `wasm-opt` because its current extern-reference
 optimization produces a fixed-size table that fails during wasm-bindgen
@@ -41,8 +55,7 @@ Migration checklist:
 1. Publish the JavaScript and WASM binary as binary data assets.
 2. Replace the embedded constants and generator with runtime asset URL lookup.
 3. Load wasm-bindgen JavaScript and WASM from those URLs.
-4. Preserve initialization caching, explicit load errors, retries, and worker
-   support.
+4. Preserve initialization caching, explicit load errors, and retries.
 5. Keep `UsvgRustLib.init()` and explicit `externalLibrary` behavior unchanged.
 6. Verify plain Dart web, Flutter web, native tests, publication contents, CSP,
-   and worker-backed asynchronous calls.
+   and synchronous web calls without cross-origin isolation.

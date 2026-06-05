@@ -15,26 +15,24 @@ abstract class SvgTree implements RustOpaqueInterface {
   bool get isEmpty;
 
   /// Parses SVG text into a normalized tree.
-  static Future<SvgTree> parse({required String svg, ParseOptions? options}) =>
+  static SvgTree parse({required String svg, ParseOptions? options}) =>
       UsvgRustLibGenerated.instance.api.crateApiSvgTreeParse(
         svg: svg,
         options: options,
       );
 
   /// Parses SVG bytes into a normalized tree.
-  static Future<SvgTree> parseBytes({
-    required List<int> data,
-    ParseOptions? options,
-  }) => UsvgRustLibGenerated.instance.api.crateApiSvgTreeParseBytes(
-    data: data,
-    options: options,
-  );
+  static SvgTree parseBytes({required List<int> data, ParseOptions? options}) =>
+      UsvgRustLibGenerated.instance.api.crateApiSvgTreeParseBytes(
+        data: data,
+        options: options,
+      );
 
   /// Returns the intrinsic size of the root SVG.
   SvgSize get size;
 
   /// Serializes the normalized tree as SVG text.
-  Future<String> toSvgString();
+  String toSvgString();
 }
 
 /// Options controlling how usvg parses and resolves an SVG document.
@@ -66,7 +64,7 @@ class ParseOptions {
     this.styleSheet,
   });
 
-  static Future<ParseOptions> default_() =>
+  static ParseOptions default_() =>
       UsvgRustLibGenerated.instance.api.crateApiParseOptionsDefault();
 
   @override

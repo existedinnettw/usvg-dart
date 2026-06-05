@@ -6,7 +6,7 @@ void main() {
   tearDownAll(UsvgRustLib.dispose);
 
   test('parses and normalizes SVG', () async {
-    final tree = await SvgTree.parse(
+    final tree = SvgTree.parse(
       svg:
           '<svg width="10" height="20">'
           '<rect id="box" width="10" height="20"/>'
@@ -15,15 +15,15 @@ void main() {
 
     expect(tree.size, const SvgSize(width: 10, height: 20));
     expect(tree.isEmpty, isFalse);
-    expect(await tree.toSvgString(), contains('<path id="box"'));
+    expect(tree.toSvgString(), contains('<path id="box"'));
   });
 
   test('reports parse errors', () async {
-    expect(SvgTree.parse(svg: '<svg>'), throwsA(isA<String>()));
+    expect(() => SvgTree.parse(svg: '<svg>'), throwsA(isA<String>()));
   });
 
   test('normalizes nested SVG elements', () async {
-    final tree = await SvgTree.parse(
+    final tree = SvgTree.parse(
       svg:
           '<svg width="100" height="100">'
           '<svg x="10" y="20" width="30" height="40">'
@@ -32,7 +32,7 @@ void main() {
           '</svg>',
     );
 
-    final normalized = await tree.toSvgString();
+    final normalized = tree.toSvgString();
     expect(normalized, isNot(contains('<svg x=')));
     expect(normalized, contains('transform="matrix(1 0 0 1 10 20)"'));
   });

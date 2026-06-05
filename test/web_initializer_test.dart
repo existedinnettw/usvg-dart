@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:test/test.dart';
 import 'package:usvg_dart/src/default_external_library_web.dart';
+import 'package:web/web.dart' as web;
 
 void main() {
   tearDown(resetEmbeddedWebWasmInitializerForTesting);
@@ -13,6 +14,7 @@ void main() {
   test(
     'initializes the embedded WebAssembly without deployed assets',
     () async {
+      expect(web.window.crossOriginIsolated, isFalse);
       final library = await initializeEmbeddedWebWasm();
       expect(library.debugInfo, contains('embedded wasm-bindgen'));
     },
