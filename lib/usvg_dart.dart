@@ -1,4 +1,4 @@
 library;
 
 export 'src/rust/api.dart';
-export 'src/rust/frb_generated.dart' show UsvgRustLib;
+export 'src/usvg_rust_lib.dart' show UsvgRustLib;

@@ -1,13 +1,14 @@
 # usvg-dart
 
 Dart bindings for [usvg](https://github.com/linebender/resvg/tree/main/crates/usvg)
-using `flutter_rust_bridge`.
+using `flutter_rust_bridge` and Dart native-assets build hooks.
 
 The Rust wrapper currently exposes SVG parsing, normalized SVG serialization,
 image size, and empty-tree checks.
 
-The Rust crate uses the local usvg source at `../resvg/crates/usvg`, relative to
-this repository.
+The build hook compiles and bundles the Rust library automatically when a
+consumer runs, tests, or builds a Dart application. Consumers need `rustup`,
+but do not need to manually build or locate the native library.
 
 ## Usage
 
@@ -27,16 +28,24 @@ print(await tree.toSvgString());
 flutter_rust_bridge_codegen generate
 ```
 
-## Build the native library
-
-```shell
-cargo build --manifest-path rust/Cargo.toml --release
-```
-
-The generated loader looks for the native library in `rust/target/release/` by
-default. Call `UsvgRustLib.init(externalLibrary: ...)` to supply a packaged
-library from another location.
+## Build and test
 
 ```shell
 dart test
+```
+
+The command invokes `hook/build.dart`, which builds the Rust crate for the
+requested target and bundles it as a native asset. Consumer applications can
+also use `dart run` and `dart build cli` without manually locating the library.
+
+WebAssembly remains a separate `flutter_rust_bridge_codegen build-web` flow.
+
+## Publishing
+
+Generated Dart and Rust bridge files must be committed before publishing:
+
+```shell
+flutter_rust_bridge_codegen generate
+dart pub publish --dry-run
+dart pub publish
 ```
