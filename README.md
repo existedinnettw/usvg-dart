@@ -1,2 +1,3 @@
 # usvg-dart
-binding usvg to dart by ffi
+
+Dart bindings for usvg using FFI.
