@@ -40,7 +40,7 @@ also use `dart run` and `dart build cli` without manually locating the library.
 
 Web consumers require no asset copy step. The generated wasm-bindgen JavaScript
 and WASM binary are embedded in the package; see
-[Embedded WebAssembly assets](docs/web-wasm-assets.md) for tradeoffs and browser
+[Embedded WebAssembly assets](doc/web-wasm-assets.md) for tradeoffs and browser
 requirements.
 
 ## Publishing

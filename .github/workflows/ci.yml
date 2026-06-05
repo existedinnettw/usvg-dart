@@ -111,7 +111,7 @@ jobs:
       - name: Set up nightly Rust for WASM
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: nightly-2025-03-01
+          toolchain: nightly-2026-06-04
           components: rust-src, rustfmt
           targets: wasm32-unknown-unknown
 
@@ -133,7 +133,7 @@ jobs:
       - name: Build WebAssembly library
         run: >-
           flutter_rust_bridge_codegen build-web --release
-          --wasm-pack-rustup-toolchain nightly-2025-03-01
+          --wasm-pack-rustup-toolchain nightly-2026-06-04
 
       - name: Verify web build artifacts
         run: |
