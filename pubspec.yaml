@@ -1,6 +1,6 @@
 name: usvg_dart
 description: Normalize complex, standards-compliant SVG into a simpler form for Dart and Flutter renderers using usvg.
-version: 1.0.1
+version: 1.0.2
 repository: https://github.com/existedinnettw/usvg-dart
 
 false_secrets:

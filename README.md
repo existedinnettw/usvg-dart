@@ -21,11 +21,11 @@ but do not need to manually build or locate the native library.
 ```dart
 await UsvgRustLib.init();
 
-final tree = await SvgTree.parse(
+final tree = SvgTree.parse(
   svg: '<svg width="10" height="20"><rect width="10" height="20"/></svg>',
 );
 print(tree.size);
-print(await tree.toSvgString());
+print(tree.toSvgString());
 ```
 
 The serialized result can then be passed to the SVG renderer used by your
@@ -46,7 +46,8 @@ but do not need to manually build or locate the native library.
 Web consumers require no asset copy step. The generated wasm-bindgen JavaScript
 and WASM binary are embedded in the package; see
 [Embedded WebAssembly assets](doc/web-wasm-assets.md) for tradeoffs and browser
-requirements.
+requirements. Web calls run synchronously and do not require cross-origin
+isolation or `SharedArrayBuffer`.
 
 ## Development
 

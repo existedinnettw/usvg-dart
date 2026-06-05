@@ -135,8 +135,7 @@ jobs:
           flutter_rust_bridge_codegen build-web --release
           --wasm-pack-rustup-toolchain nightly-2026-06-04
           --wasm-pack-rustflags
-          "-C target-feature=+atomics,+bulk-memory,+mutable-globals
-          --remap-path-prefix=${HOME}=/home/user"
+          "--remap-path-prefix=${HOME}=/home/user"
 
       - name: Verify web build artifacts
         run: |
@@ -153,4 +152,7 @@ jobs:
         run: rm -rf web/pkg
 
       - name: Run browser tests without deployed web/pkg assets
-        run: dart test -p chrome test/web_initializer_test.dart
+        run: >-
+          dart test -p chrome
+          test/web_initializer_test.dart
+          test/usvg_dart_test.dart

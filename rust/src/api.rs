@@ -20,6 +20,7 @@ pub struct ParseOptions {
 }
 
 impl Default for ParseOptions {
+    #[frb(sync)]
     fn default() -> Self {
         Self {
             resources_dir: None,
@@ -48,11 +49,13 @@ pub struct SvgTree {
 }
 
 impl SvgTree {
+    #[frb(sync)]
     /// Parses SVG text into a normalized tree.
     pub fn parse(svg: String, options: Option<ParseOptions>) -> Result<Self, String> {
         Self::parse_bytes(svg.into_bytes(), options)
     }
 
+    #[frb(sync)]
     /// Parses SVG bytes into a normalized tree.
     pub fn parse_bytes(data: Vec<u8>, options: Option<ParseOptions>) -> Result<Self, String> {
         let options = to_usvg_options(options.unwrap_or_default());
@@ -77,6 +80,7 @@ impl SvgTree {
         !self.tree.root().has_children()
     }
 
+    #[frb(sync)]
     /// Serializes the normalized tree as SVG text.
     pub fn to_svg_string(&self) -> String {
         self.tree.to_string(&usvg::WriteOptions::default())

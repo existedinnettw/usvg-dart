@@ -1,3 +1,8 @@
+## 1.0.2
+
+- Remove the web cross-origin isolation and `SharedArrayBuffer` requirement.
+- Run web SVG operations synchronously on the browser main thread.
+
 ## 1.0.1
 
 - Embed web WebAssembly assets for zero-setup browser initialization.

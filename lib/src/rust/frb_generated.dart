@@ -84,21 +84,18 @@ class UsvgRustLibGenerated
 abstract class UsvgRustLibGeneratedApi extends BaseApi {
   bool crateApiSvgTreeIsEmpty({required SvgTree that});
 
-  Future<SvgTree> crateApiSvgTreeParse({
-    required String svg,
-    ParseOptions? options,
-  });
+  SvgTree crateApiSvgTreeParse({required String svg, ParseOptions? options});
 
-  Future<SvgTree> crateApiSvgTreeParseBytes({
+  SvgTree crateApiSvgTreeParseBytes({
     required List<int> data,
     ParseOptions? options,
   });
 
   SvgSize crateApiSvgTreeSize({required SvgTree that});
 
-  Future<String> crateApiSvgTreeToSvgString({required SvgTree that});
+  String crateApiSvgTreeToSvgString({required SvgTree that});
 
-  Future<ParseOptions> crateApiParseOptionsDefault();
+  ParseOptions crateApiParseOptionsDefault();
 
   RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_SvgTree;
 
@@ -143,22 +140,14 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
       const TaskConstMeta(debugName: "SvgTree_is_empty", argNames: ["that"]);
 
   @override
-  Future<SvgTree> crateApiSvgTreeParse({
-    required String svg,
-    ParseOptions? options,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
+  SvgTree crateApiSvgTreeParse({required String svg, ParseOptions? options}) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_String(svg, serializer);
           sse_encode_opt_box_autoadd_parse_options(options, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 2,
-            port: port_,
-          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2)!;
         },
         codec: SseCodec(
           decodeSuccessData:
@@ -178,22 +167,17 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
   );
 
   @override
-  Future<SvgTree> crateApiSvgTreeParseBytes({
+  SvgTree crateApiSvgTreeParseBytes({
     required List<int> data,
     ParseOptions? options,
   }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_list_prim_u_8_loose(data, serializer);
           sse_encode_opt_box_autoadd_parse_options(options, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 3,
-            port: port_,
-          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3)!;
         },
         codec: SseCodec(
           decodeSuccessData:
@@ -239,21 +223,16 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
       const TaskConstMeta(debugName: "SvgTree_size", argNames: ["that"]);
 
   @override
-  Future<String> crateApiSvgTreeToSvgString({required SvgTree that}) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
+  String crateApiSvgTreeToSvgString({required SvgTree that}) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSvgTree(
             that,
             serializer,
           );
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 5,
-            port: port_,
-          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_String,
@@ -272,17 +251,12 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
   );
 
   @override
-  Future<ParseOptions> crateApiParseOptionsDefault() {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
+  ParseOptions crateApiParseOptionsDefault() {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 6,
-            port: port_,
-          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_parse_options,
@@ -792,6 +766,6 @@ class SvgTreeImpl extends RustOpaque implements SvgTree {
       UsvgRustLibGenerated.instance.api.crateApiSvgTreeSize(that: this);
 
   /// Serializes the normalized tree as SVG text.
-  Future<String> toSvgString() =>
+  String toSvgString() =>
       UsvgRustLibGenerated.instance.api.crateApiSvgTreeToSvgString(that: this);
 }

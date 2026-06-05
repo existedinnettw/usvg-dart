@@ -12,7 +12,6 @@ const _wasmBindgenName = 'wasm_bindgen';
 const _initializerName = '__usvg_dart_initialize_wasm';
 
 Future<ExternalLibrary>? _initialization;
-final _retainedScriptResources = <Object>[];
 
 @visibleForTesting
 Future<ExternalLibrary> Function()? embeddedWebWasmInitializerOverride;
@@ -56,18 +55,15 @@ Future<ExternalLibrary> _initialize() async {
     final wasmBytes = base64Decode(embeddedWasmBinaryBase64);
     await _initializeWasm(wasmBytes.toJS).toDart;
 
-    // FRB workers import this script URL after initialization.
-    _retainedScriptResources.addAll([blobUrl, script]);
     // The analyzer resolves ExternalLibrary to its native conditional shape.
     // ignore: const_with_undefined_constructor_default
     return const ExternalLibrary(
       debugInfo: 'embedded wasm-bindgen JavaScript and WebAssembly',
       wasmBindgenName: _wasmBindgenName,
     );
-  } catch (_) {
+  } finally {
     script.remove();
     web.URL.revokeObjectURL(blobUrl);
-    rethrow;
   }
 }
 
