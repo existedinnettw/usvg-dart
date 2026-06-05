@@ -33,15 +33,10 @@ jobs:
         with:
           path: usvg-dart
 
-      - name: Check out resvg
-        uses: actions/checkout@v6
-        with:
-          repository: linebender/resvg
-          ref: fd5eab930042a85a342d25373c96eefbb44a9831
-          path: resvg
-
       - name: Set up Dart
         uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
 
       - name: Cache Dart dependencies
         uses: actions/cache@v5
@@ -51,7 +46,10 @@ jobs:
           restore-keys: pub-${{ runner.os }}-
 
       - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.94.1
+          components: rustfmt
 
       - name: Cache Rust dependencies and build artifacts
         uses: Swatinem/rust-cache@v2
@@ -68,11 +66,15 @@ jobs:
       - name: Generate Dart bindings
         run: flutter_rust_bridge_codegen generate
 
-      - name: Build native library
-        run: cargo build --manifest-path rust/Cargo.toml --release
+      - name: Verify generated bindings are committed
+        run: git diff --exit-code -- lib/src/rust rust/src/frb_generated.rs
 
       - name: Run tests
         run: dart test
+
+      - name: Verify publish archive
+        if: runner.os == 'Linux'
+        run: dart pub publish --dry-run --ignore-warnings
 
   web:
     name: Web build
@@ -88,17 +90,10 @@ jobs:
         with:
           path: usvg-dart
 
-      - name: Check out resvg
-        uses: actions/checkout@v6
-        with:
-          repository: linebender/resvg
-          ref: fd5eab930042a85a342d25373c96eefbb44a9831
-          path: resvg
-
       - name: Set up Dart
         uses: dart-lang/setup-dart@v1
         with:
-          sdk: 3.11.4
+          sdk: stable
 
       - name: Cache Dart dependencies
         uses: actions/cache@v5
@@ -111,7 +106,7 @@ jobs:
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: nightly-2026-06-04
-          components: rust-src
+          components: rust-src, rustfmt
           targets: wasm32-unknown-unknown
 
       - name: Cache Rust dependencies, tools, and build artifacts
