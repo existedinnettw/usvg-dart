@@ -338,6 +338,12 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
   }
 
   @protected
+  List<Uint8List> dco_decode_list_list_prim_u_8_strict(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_list_prim_u_8_strict).toList();
+  }
+
+  @protected
   List<int> dco_decode_list_prim_u_8_loose(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as List<int>;
@@ -365,8 +371,8 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
   ParseOptions dco_decode_parse_options(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 6)
-      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    if (arr.length != 8)
+      throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
     return ParseOptions(
       resourcesDir: dco_decode_opt_String(arr[0]),
       dpi: dco_decode_f_32(arr[1]),
@@ -374,6 +380,8 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
       fontSize: dco_decode_f_32(arr[3]),
       languages: dco_decode_list_String(arr[4]),
       styleSheet: dco_decode_opt_String(arr[5]),
+      loadSystemFonts: dco_decode_bool(arr[6]),
+      fontData: dco_decode_list_list_prim_u_8_strict(arr[7]),
     );
   }
 
@@ -483,6 +491,20 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
   }
 
   @protected
+  List<Uint8List> sse_decode_list_list_prim_u_8_strict(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <Uint8List>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_list_prim_u_8_strict(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
   List<int> sse_decode_list_prim_u_8_loose(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var len_ = sse_decode_i_32(deserializer);
@@ -529,6 +551,8 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
     var var_fontSize = sse_decode_f_32(deserializer);
     var var_languages = sse_decode_list_String(deserializer);
     var var_styleSheet = sse_decode_opt_String(deserializer);
+    var var_loadSystemFonts = sse_decode_bool(deserializer);
+    var var_fontData = sse_decode_list_list_prim_u_8_strict(deserializer);
     return ParseOptions(
       resourcesDir: var_resourcesDir,
       dpi: var_dpi,
@@ -536,6 +560,8 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
       fontSize: var_fontSize,
       languages: var_languages,
       styleSheet: var_styleSheet,
+      loadSystemFonts: var_loadSystemFonts,
+      fontData: var_fontData,
     );
   }
 
@@ -646,6 +672,18 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
   }
 
   @protected
+  void sse_encode_list_list_prim_u_8_strict(
+    List<Uint8List> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_list_prim_u_8_strict(item, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_list_prim_u_8_loose(
     List<int> self,
     SseSerializer serializer,
@@ -699,6 +737,8 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
     sse_encode_f_32(self.fontSize, serializer);
     sse_encode_list_String(self.languages, serializer);
     sse_encode_opt_String(self.styleSheet, serializer);
+    sse_encode_bool(self.loadSystemFonts, serializer);
+    sse_encode_list_list_prim_u_8_strict(self.fontData, serializer);
   }
 
   @protected

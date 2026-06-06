@@ -31,6 +31,10 @@ print(tree.toSvgString());
 The serialized result can then be passed to the SVG renderer used by your
 application.
 
+Text is converted to paths during normalization. Native platforms load system
+fonts by default. For reproducible output and for web, pass font file bytes
+through `ParseOptions.fontData`.
+
 ## Supported platforms
 
 `usvg_dart` supports Android, iOS, Linux, macOS, Windows, and web. Native
