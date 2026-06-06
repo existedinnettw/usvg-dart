@@ -7,10 +7,5 @@ String? get systemFontFamily {
   return null;
 }
 
-Uint8List? get callerProvidedFontData {
-  if (!Platform.isLinux) return null;
-
-  return File(
-    '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
-  ).readAsBytesSync();
-}
+Future<Uint8List> loadTinosFontData() =>
+    File('test/fonts/Tinos-Regular.ttf').readAsBytes();

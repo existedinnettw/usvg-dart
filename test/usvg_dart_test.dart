@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:test/test.dart';
 import 'package:usvg_dart/usvg_dart.dart';
 
@@ -54,30 +56,55 @@ void main() {
     expect(normalized, isNot(contains('<text')));
   });
 
-  test('normalizes text with caller-provided font data', () {
-    final font = callerProvidedFontData;
-    if (font == null) return;
+  test('preserves text during serialization when requested', () {
+    if (systemFontFamily == null) return;
 
-    final defaults = ParseOptions.default_();
     final tree = SvgTree.parse(
       svg:
           '<svg width="100" height="30">'
-          '<text x="0" y="20" font-family="DejaVu Sans">Text</text>'
+          '<text x="0" y="20" font-family="$systemFontFamily">Text</text>'
           '</svg>',
-      options: ParseOptions(
-        resourcesDir: defaults.resourcesDir,
-        dpi: defaults.dpi,
-        fontFamily: defaults.fontFamily,
-        fontSize: defaults.fontSize,
-        languages: defaults.languages,
-        styleSheet: defaults.styleSheet,
-        loadSystemFonts: false,
-        fontData: [font],
-      ),
     );
 
-    final normalized = tree.toSvgString();
-    expect(normalized, contains('<path'));
-    expect(normalized, isNot(contains('<text')));
+    final normalized = tree.toSvgString(preserveText: true);
+    expect(normalized, contains('<text'));
+    expect(normalized, contains('Text'));
   });
+
+  test('preserves text loaded from caller-provided font data', () async {
+    final font = await loadTinosFontData();
+    if (font == null) return;
+
+    const svg =
+        '<svg width="100" height="30">'
+        '<text x="0" y="20" font-family="Tinos">Tinos text</text>'
+        '</svg>';
+
+    final withoutFont = SvgTree.parse(
+      svg: svg,
+      options: _optionsWithFontData([]),
+    ).toSvgString(preserveText: true);
+    expect(withoutFont, isNot(contains('<text')));
+
+    final withFont = SvgTree.parse(
+      svg: svg,
+      options: _optionsWithFontData([font]),
+    ).toSvgString(preserveText: true);
+    expect(withFont, contains('<text'));
+    expect(withFont, contains('Tinos text'));
+  });
+}
+
+ParseOptions _optionsWithFontData(List<Uint8List> fontData) {
+  final defaults = ParseOptions.default_();
+  return ParseOptions(
+    resourcesDir: defaults.resourcesDir,
+    dpi: defaults.dpi,
+    fontFamily: defaults.fontFamily,
+    fontSize: defaults.fontSize,
+    languages: defaults.languages,
+    styleSheet: defaults.styleSheet,
+    loadSystemFonts: false,
+    fontData: fontData,
+  );
 }

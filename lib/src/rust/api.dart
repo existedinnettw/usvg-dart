@@ -32,7 +32,10 @@ abstract class SvgTree implements RustOpaqueInterface {
   SvgSize get size;
 
   /// Serializes the normalized tree as SVG text.
-  String toSvgString();
+  ///
+  /// When enabled, successfully parsed text is serialized as text elements
+  /// instead of paths. Fonts are still required while parsing.
+  String toSvgString({bool preserveText = false});
 }
 
 /// Options controlling how usvg parses and resolves an SVG document.

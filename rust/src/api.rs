@@ -89,8 +89,14 @@ impl SvgTree {
 
     #[frb(sync)]
     /// Serializes the normalized tree as SVG text.
-    pub fn to_svg_string(&self) -> String {
-        self.tree.to_string(&usvg::WriteOptions::default())
+    ///
+    /// When enabled, successfully parsed text is serialized as text elements
+    /// instead of paths. Fonts are still required while parsing.
+    pub fn to_svg_string(&self, #[frb(default = false)] preserve_text: bool) -> String {
+        self.tree.to_string(&usvg::WriteOptions {
+            preserve_text,
+            ..usvg::WriteOptions::default()
+        })
     }
 }
 

@@ -93,7 +93,10 @@ abstract class UsvgRustLibGeneratedApi extends BaseApi {
 
   SvgSize crateApiSvgTreeSize({required SvgTree that});
 
-  String crateApiSvgTreeToSvgString({required SvgTree that});
+  String crateApiSvgTreeToSvgString({
+    required SvgTree that,
+    bool preserveText = false,
+  });
 
   ParseOptions crateApiParseOptionsDefault();
 
@@ -223,7 +226,10 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
       const TaskConstMeta(debugName: "SvgTree_size", argNames: ["that"]);
 
   @override
-  String crateApiSvgTreeToSvgString({required SvgTree that}) {
+  String crateApiSvgTreeToSvgString({
+    required SvgTree that,
+    bool preserveText = false,
+  }) {
     return handler.executeSync(
       SyncTask(
         callFfi: () {
@@ -232,6 +238,7 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
             that,
             serializer,
           );
+          sse_encode_bool(preserveText, serializer);
           return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5)!;
         },
         codec: SseCodec(
@@ -239,7 +246,7 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
           decodeErrorData: null,
         ),
         constMeta: kCrateApiSvgTreeToSvgStringConstMeta,
-        argValues: [that],
+        argValues: [that, preserveText],
         apiImpl: this,
       ),
     );
@@ -247,7 +254,7 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
 
   TaskConstMeta get kCrateApiSvgTreeToSvgStringConstMeta => const TaskConstMeta(
     debugName: "SvgTree_to_svg_string",
-    argNames: ["that"],
+    argNames: ["that", "preserveText"],
   );
 
   @override
@@ -806,6 +813,11 @@ class SvgTreeImpl extends RustOpaque implements SvgTree {
       UsvgRustLibGenerated.instance.api.crateApiSvgTreeSize(that: this);
 
   /// Serializes the normalized tree as SVG text.
-  String toSvgString() =>
-      UsvgRustLibGenerated.instance.api.crateApiSvgTreeToSvgString(that: this);
+  ///
+  /// When enabled, successfully parsed text is serialized as text elements
+  /// instead of paths. Fonts are still required while parsing.
+  String toSvgString({bool preserveText = false}) => UsvgRustLibGenerated
+      .instance
+      .api
+      .crateApiSvgTreeToSvgString(that: this, preserveText: preserveText);
 }

@@ -226,6 +226,7 @@ fn wire__crate__api__SvgTree_to_svg_string_impl(
             let api_that = <RustOpaqueMoi<
                 flutter_rust_bridge::for_generated::RustAutoOpaqueInner<SvgTree>,
             >>::sse_decode(&mut deserializer);
+            let api_preserve_text = <bool>::sse_decode(&mut deserializer);
             deserializer.end();
             transform_result_sse::<_, ()>((move || {
                 let mut api_that_guard = None;
@@ -242,8 +243,10 @@ fn wire__crate__api__SvgTree_to_svg_string_impl(
                     }
                 }
                 let api_that_guard = api_that_guard.unwrap();
-                let output_ok =
-                    Result::<_, ()>::Ok(crate::api::SvgTree::to_svg_string(&*api_that_guard))?;
+                let output_ok = Result::<_, ()>::Ok(crate::api::SvgTree::to_svg_string(
+                    &*api_that_guard,
+                    api_preserve_text,
+                ))?;
                 Ok(output_ok)
             })())
         },
