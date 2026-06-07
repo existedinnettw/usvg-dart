@@ -106,6 +106,7 @@ impl UsvgFontDatabase {
             return Ok(0);
         }
 
+        let data = decode_web_font(data)?;
         let previous_count = state.database.len();
         state.database.load_font_data(data);
         let loaded_count = state.database.len() - previous_count;
@@ -193,6 +194,15 @@ impl UsvgFontDatabase {
     }
 }
 
+fn decode_web_font(data: Vec<u8>) -> Result<Vec<u8>, String> {
+    if data.starts_with(b"wOF2") {
+        woff2_patched::convert_woff2_to_ttf(&mut std::io::Cursor::new(data))
+            .map_err(|error| format!("Failed to decode WOFF2 font: {error}"))
+    } else {
+        Ok(data)
+    }
+}
+
 fn missing_characters(
     database: &usvg::fontdb::Database,
     text: String,
@@ -212,6 +222,7 @@ fn missing_characters(
     let mut seen = HashSet::new();
 
     text.chars()
+        .filter(|character| !character.is_control())
         .filter(|character| seen.insert(*character))
         .filter(|character| {
             !face_ids.iter().any(|id| {

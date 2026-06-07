@@ -6,7 +6,7 @@
 import 'frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `missing_characters`, `parse_tree`, `system_font_database`, `to_usvg_options`
+// These functions are ignored because they are not marked as `pub`: `decode_web_font`, `missing_characters`, `parse_tree`, `system_font_database`, `to_usvg_options`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `FontDatabaseState`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`, `fmt`
 

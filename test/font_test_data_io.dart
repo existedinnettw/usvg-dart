@@ -9,3 +9,6 @@ String? get systemFontFamily {
 
 Future<Uint8List> loadTinosFontData() =>
     File('test/fonts/Tinos-Regular.ttf').readAsBytes();
+
+Future<Uint8List> loadRobotoWoff2Data() =>
+    File('test/fonts/Roboto-Hello.woff2').readAsBytes();

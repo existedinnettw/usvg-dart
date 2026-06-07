@@ -130,6 +130,19 @@ void main() {
     expect(database.faceCount, 0);
   });
 
+  test('persistent font database decodes browser-delivered WOFF2', () async {
+    final font = await loadRobotoWoff2Data();
+    if (font == null) return;
+
+    final database = UsvgFontDatabase(loadSystemFonts: false);
+    expect(
+      database.registerFontData(key: 'roboto-hello-woff2', data: font),
+      greaterThan(0),
+    );
+    expect(database.hasFamily(family: 'Roboto'), isTrue);
+    expect(database.missingCharacters(text: 'Hello'), isEmpty);
+  });
+
   test('persistent font database reports actual glyph coverage', () async {
     final font = await loadTinosFontData();
     if (font == null) return;
@@ -143,6 +156,7 @@ void main() {
     expect(database.familyForText(text: 'AA'), 'Tinos');
     expect(database.familyForText(text: '單'), isNull);
     expect(database.missingCharacters(text: 'A單A'), '單');
+    expect(database.missingCharacters(text: '\nA\t\r'), isEmpty);
     expect(
       database.missingCharactersForFamily(family: 'Tinos', text: 'A單A'),
       '單',
