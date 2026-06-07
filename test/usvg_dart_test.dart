@@ -49,6 +49,7 @@ void main() {
           '<svg width="100" height="30">'
           '<text x="0" y="20" font-family="$systemFontFamily">Text</text>'
           '</svg>',
+      options: _optionsWithSystemFonts(),
     );
 
     final normalized = tree.toSvgString();
@@ -64,6 +65,7 @@ void main() {
           '<svg width="100" height="30">'
           '<text x="0" y="20" font-family="$systemFontFamily">Text</text>'
           '</svg>',
+      options: _optionsWithSystemFonts(),
     );
 
     final normalized = tree.toSvgString(preserveText: true);
@@ -127,6 +129,29 @@ void main() {
     expect(database.registerFontData(key: 'invalid', data: [1, 2, 3]), 0);
     expect(database.faceCount, 0);
   });
+
+  test('persistent font database reports actual glyph coverage', () async {
+    final font = await loadTinosFontData();
+    if (font == null) return;
+
+    final database = UsvgFontDatabase(loadSystemFonts: false);
+    expect(database.missingCharacters(text: 'A單A'), 'A單');
+    database.registerFontData(key: 'tinos-regular', data: font);
+
+    expect(database.hasFamily(family: 'Tinos'), isTrue);
+    expect(database.hasFamily(family: 'Roboto'), isFalse);
+    expect(database.familyForText(text: 'AA'), 'Tinos');
+    expect(database.familyForText(text: '單'), isNull);
+    expect(database.missingCharacters(text: 'A單A'), '單');
+    expect(
+      database.missingCharactersForFamily(family: 'Tinos', text: 'A單A'),
+      '單',
+    );
+    expect(
+      database.missingCharactersForFamily(family: 'Roboto', text: 'AA'),
+      'A',
+    );
+  });
 }
 
 ParseOptions _optionsWithFontData(List<Uint8List> fontData) {
@@ -140,5 +165,19 @@ ParseOptions _optionsWithFontData(List<Uint8List> fontData) {
     styleSheet: defaults.styleSheet,
     loadSystemFonts: false,
     fontData: fontData,
+  );
+}
+
+ParseOptions _optionsWithSystemFonts() {
+  final defaults = ParseOptions.default_();
+  return ParseOptions(
+    resourcesDir: defaults.resourcesDir,
+    dpi: defaults.dpi,
+    fontFamily: defaults.fontFamily,
+    fontSize: defaults.fontSize,
+    languages: defaults.languages,
+    styleSheet: defaults.styleSheet,
+    loadSystemFonts: true,
+    fontData: const [],
   );
 }

@@ -35,18 +35,18 @@ impl Default for ParseOptions {
             font_size: 12.0,
             languages: vec!["en".to_owned()],
             style_sheet: None,
-            load_system_fonts: true,
+            load_system_fonts: false,
             font_data: Vec::new(),
         }
     }
 }
 
 // TODO: [usvg::Options](https://docs.rs/usvg/latest/usvg/struct.Options.html)
-// usvg::Options is not Send + Sync, so we can't expose it directly. We 
-// could consider implementing Send + Sync manually if we can guarantee that the 
-// font database is only mutated during parsing, but that would require more 
-// careful synchronization and testing. For now, we can expose the most commonly 
-// used options through our own ParseOptions struct and convert it to 
+// usvg::Options is not Send + Sync, so we can't expose it directly. We
+// could consider implementing Send + Sync manually if we can guarantee that the
+// font database is only mutated during parsing, but that would require more
+// careful synchronization and testing. For now, we can expose the most commonly
+// used options through our own ParseOptions struct and convert it to
 // usvg::Options internally. We can always add more options later if needed.
 // TODO: [usvg::WriteOptions](https://docs.rs/usvg/latest/usvg/struct.WriteOptions.html)
 // TODO: [usvg::FontResolver](https://docs.rs/usvg/latest/usvg/struct.FontResolver.html)
@@ -125,6 +125,53 @@ impl UsvgFontDatabase {
     }
 
     #[frb(sync)]
+    /// Returns unique characters not covered by any registered font face.
+    pub fn missing_characters(&self, text: String) -> Result<String, String> {
+        let state = self.state.lock().map_err(|error| error.to_string())?;
+        Ok(missing_characters(&state.database, text, None))
+    }
+
+    #[frb(sync)]
+    /// Returns unique characters not covered by any face in the named family.
+    pub fn missing_characters_for_family(
+        &self,
+        family: String,
+        text: String,
+    ) -> Result<String, String> {
+        let state = self.state.lock().map_err(|error| error.to_string())?;
+        Ok(missing_characters(&state.database, text, Some(&family)))
+    }
+
+    #[frb(sync)]
+    /// Returns whether at least one registered face belongs to the named family.
+    pub fn has_family(&self, family: String) -> Result<bool, String> {
+        let state = self.state.lock().map_err(|error| error.to_string())?;
+        let found = state.database.faces().any(|face| {
+            face.families
+                .iter()
+                .any(|candidate| candidate.0.eq_ignore_ascii_case(&family))
+        });
+        Ok(found)
+    }
+
+    #[frb(sync)]
+    /// Returns the first registered family whose faces cover all characters.
+    pub fn family_for_text(&self, text: String) -> Result<Option<String>, String> {
+        let state = self.state.lock().map_err(|error| error.to_string())?;
+        let mut seen = HashSet::new();
+        for face in state.database.faces() {
+            for family in &face.families {
+                if seen.insert(family.0.clone())
+                    && missing_characters(&state.database, text.clone(), Some(&family.0)).is_empty()
+                {
+                    return Ok(Some(family.0.clone()));
+                }
+            }
+        }
+        Ok(None)
+    }
+
+    #[frb(sync)]
     /// Parses SVG text using a snapshot of this database.
     pub fn parse(&self, svg: String, options: Option<ParseOptions>) -> Result<SvgTree, String> {
         self.parse_bytes(svg.into_bytes(), options)
@@ -144,6 +191,40 @@ impl UsvgFontDatabase {
             .map_err(|error| error.to_string())?;
         parse_tree(data, options, Some(database))
     }
+}
+
+fn missing_characters(
+    database: &usvg::fontdb::Database,
+    text: String,
+    family: Option<&str>,
+) -> String {
+    let face_ids: Vec<_> = database
+        .faces()
+        .filter(|face| {
+            family.is_none_or(|name| {
+                face.families
+                    .iter()
+                    .any(|candidate| candidate.0.eq_ignore_ascii_case(name))
+            })
+        })
+        .map(|face| face.id)
+        .collect();
+    let mut seen = HashSet::new();
+
+    text.chars()
+        .filter(|character| seen.insert(*character))
+        .filter(|character| {
+            !face_ids.iter().any(|id| {
+                database
+                    .with_face_data(*id, |data, index| {
+                        ttf_parser::Face::parse(data, index)
+                            .ok()
+                            .is_some_and(|face| face.glyph_index(*character).is_some())
+                    })
+                    .unwrap_or(false)
+            })
+        })
+        .collect()
 }
 
 impl SvgTree {

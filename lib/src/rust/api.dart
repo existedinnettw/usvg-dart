@@ -6,7 +6,7 @@
 import 'frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `parse_tree`, `system_font_database`, `to_usvg_options`
+// These functions are ignored because they are not marked as `pub`: `missing_characters`, `parse_tree`, `system_font_database`, `to_usvg_options`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `FontDatabaseState`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`, `fmt`
 
@@ -43,6 +43,21 @@ abstract class SvgTree implements RustOpaqueInterface {
 abstract class UsvgFontDatabase implements RustOpaqueInterface {
   /// Returns the number of font faces currently available.
   int get faceCount;
+
+  /// Returns the first registered family whose faces cover all characters.
+  String? familyForText({required String text});
+
+  /// Returns whether at least one registered face belongs to the named family.
+  bool hasFamily({required String family});
+
+  /// Returns unique characters not covered by any registered font face.
+  String missingCharacters({required String text});
+
+  /// Returns unique characters not covered by any face in the named family.
+  String missingCharactersForFamily({
+    required String family,
+    required String text,
+  });
 
   /// Creates an empty database, optionally initialized with system fonts.
   factory UsvgFontDatabase({required bool loadSystemFonts}) =>
