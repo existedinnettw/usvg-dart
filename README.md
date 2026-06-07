@@ -35,6 +35,16 @@ Text is converted to paths during normalization. Native platforms load system
 fonts by default. For reproducible output and for web, pass font file bytes
 through `ParseOptions.fontData`.
 
+For applications that load fonts dynamically, create an `UsvgFontDatabase`,
+register the same font bytes used by the application, and parse through the
+database. Registered fonts persist across parses:
+
+```dart
+final fonts = UsvgFontDatabase(loadSystemFonts: false);
+fonts.registerFontData(key: 'my-font-regular', data: fontBytes);
+final tree = fonts.parse(svg: svg);
+```
+
 To keep successfully parsed text as SVG `<text>` elements for the final
 renderer, serialize with `tree.toSvgString(preserveText: true)`. usvg still
 requires matching fonts while parsing, even when text is preserved during

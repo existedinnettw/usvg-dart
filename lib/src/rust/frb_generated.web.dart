@@ -25,9 +25,19 @@ abstract class UsvgRustLibGeneratedApiImplPlatform
   get rust_arc_decrement_strong_count_SvgTreePtr => wire
       .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSvgTree;
 
+  CrossPlatformFinalizerArg
+  get rust_arc_decrement_strong_count_UsvgFontDatabasePtr => wire
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase;
+
   @protected
   SvgTree
   dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSvgTree(
+    dynamic raw,
+  );
+
+  @protected
+  UsvgFontDatabase
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
     dynamic raw,
   );
 
@@ -38,8 +48,20 @@ abstract class UsvgRustLibGeneratedApiImplPlatform
   );
 
   @protected
+  UsvgFontDatabase
+  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+    dynamic raw,
+  );
+
+  @protected
   SvgTree
   dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSvgTree(
+    dynamic raw,
+  );
+
+  @protected
+  UsvgFontDatabase
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
     dynamic raw,
   );
 
@@ -80,6 +102,9 @@ abstract class UsvgRustLibGeneratedApiImplPlatform
   SvgSize dco_decode_svg_size(dynamic raw);
 
   @protected
+  int dco_decode_u_32(dynamic raw);
+
+  @protected
   int dco_decode_u_8(dynamic raw);
 
   @protected
@@ -95,14 +120,32 @@ abstract class UsvgRustLibGeneratedApiImplPlatform
   );
 
   @protected
+  UsvgFontDatabase
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   SvgTree
   sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSvgTree(
     SseDeserializer deserializer,
   );
 
   @protected
+  UsvgFontDatabase
+  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   SvgTree
   sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSvgTree(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  UsvgFontDatabase
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
     SseDeserializer deserializer,
   );
 
@@ -149,6 +192,9 @@ abstract class UsvgRustLibGeneratedApiImplPlatform
   SvgSize sse_decode_svg_size(SseDeserializer deserializer);
 
   @protected
+  int sse_decode_u_32(SseDeserializer deserializer);
+
+  @protected
   int sse_decode_u_8(SseDeserializer deserializer);
 
   @protected
@@ -169,6 +215,13 @@ abstract class UsvgRustLibGeneratedApiImplPlatform
 
   @protected
   void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+    UsvgFontDatabase self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
   sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSvgTree(
     SvgTree self,
     SseSerializer serializer,
@@ -176,8 +229,22 @@ abstract class UsvgRustLibGeneratedApiImplPlatform
 
   @protected
   void
+  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+    UsvgFontDatabase self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
   sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSvgTree(
     SvgTree self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+    UsvgFontDatabase self,
     SseSerializer serializer,
   );
 
@@ -230,6 +297,9 @@ abstract class UsvgRustLibGeneratedApiImplPlatform
   void sse_encode_svg_size(SvgSize self, SseSerializer serializer);
 
   @protected
+  void sse_encode_u_32(int self, SseSerializer serializer);
+
+  @protected
   void sse_encode_u_8(int self, SseSerializer serializer);
 
   @protected
@@ -262,6 +332,22 @@ class UsvgRustLibGeneratedWire implements BaseWire {
       .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSvgTree(
         ptr,
       );
+
+  void
+  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+    int ptr,
+  ) => wasmModule
+      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+        ptr,
+      );
+
+  void
+  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+    int ptr,
+  ) => wasmModule
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+        ptr,
+      );
 }
 
 @JS('wasm_bindgen')
@@ -278,6 +364,16 @@ extension type UsvgRustLibGeneratedWasmModule._(JSObject _)
 
   external void
   rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSvgTree(
+    int ptr,
+  );
+
+  external void
+  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+    int ptr,
+  );
+
+  external void
+  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
     int ptr,
   );
 }

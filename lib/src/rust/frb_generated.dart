@@ -70,7 +70,7 @@ class UsvgRustLibGenerated
   String get codegenVersion => '2.12.0';
 
   @override
-  int get rustContentHash => -929826770;
+  int get rustContentHash => 337936067;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -98,6 +98,28 @@ abstract class UsvgRustLibGeneratedApi extends BaseApi {
     bool preserveText = false,
   });
 
+  int crateApiUsvgFontDatabaseFaceCount({required UsvgFontDatabase that});
+
+  UsvgFontDatabase crateApiUsvgFontDatabaseNew({required bool loadSystemFonts});
+
+  SvgTree crateApiUsvgFontDatabaseParse({
+    required UsvgFontDatabase that,
+    required String svg,
+    ParseOptions? options,
+  });
+
+  SvgTree crateApiUsvgFontDatabaseParseBytes({
+    required UsvgFontDatabase that,
+    required List<int> data,
+    ParseOptions? options,
+  });
+
+  int crateApiUsvgFontDatabaseRegisterFontData({
+    required UsvgFontDatabase that,
+    required String key,
+    required List<int> data,
+  });
+
   ParseOptions crateApiParseOptionsDefault();
 
   RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_SvgTree;
@@ -105,6 +127,15 @@ abstract class UsvgRustLibGeneratedApi extends BaseApi {
   RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_SvgTree;
 
   CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_SvgTreePtr;
+
+  RustArcIncrementStrongCountFnType
+  get rust_arc_increment_strong_count_UsvgFontDatabase;
+
+  RustArcDecrementStrongCountFnType
+  get rust_arc_decrement_strong_count_UsvgFontDatabase;
+
+  CrossPlatformFinalizerArg
+  get rust_arc_decrement_strong_count_UsvgFontDatabasePtr;
 }
 
 class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
@@ -258,12 +289,177 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
   );
 
   @override
+  int crateApiUsvgFontDatabaseFaceCount({required UsvgFontDatabase that}) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_u_32,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiUsvgFontDatabaseFaceCountConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiUsvgFontDatabaseFaceCountConstMeta =>
+      const TaskConstMeta(
+        debugName: "UsvgFontDatabase_face_count",
+        argNames: ["that"],
+      );
+
+  @override
+  UsvgFontDatabase crateApiUsvgFontDatabaseNew({
+    required bool loadSystemFonts,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_bool(loadSystemFonts, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData:
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiUsvgFontDatabaseNewConstMeta,
+        argValues: [loadSystemFonts],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiUsvgFontDatabaseNewConstMeta =>
+      const TaskConstMeta(
+        debugName: "UsvgFontDatabase_new",
+        argNames: ["loadSystemFonts"],
+      );
+
+  @override
+  SvgTree crateApiUsvgFontDatabaseParse({
+    required UsvgFontDatabase that,
+    required String svg,
+    ParseOptions? options,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+            that,
+            serializer,
+          );
+          sse_encode_String(svg, serializer);
+          sse_encode_opt_box_autoadd_parse_options(options, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData:
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSvgTree,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiUsvgFontDatabaseParseConstMeta,
+        argValues: [that, svg, options],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiUsvgFontDatabaseParseConstMeta =>
+      const TaskConstMeta(
+        debugName: "UsvgFontDatabase_parse",
+        argNames: ["that", "svg", "options"],
+      );
+
+  @override
+  SvgTree crateApiUsvgFontDatabaseParseBytes({
+    required UsvgFontDatabase that,
+    required List<int> data,
+    ParseOptions? options,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+            that,
+            serializer,
+          );
+          sse_encode_list_prim_u_8_loose(data, serializer);
+          sse_encode_opt_box_autoadd_parse_options(options, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData:
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSvgTree,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiUsvgFontDatabaseParseBytesConstMeta,
+        argValues: [that, data, options],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiUsvgFontDatabaseParseBytesConstMeta =>
+      const TaskConstMeta(
+        debugName: "UsvgFontDatabase_parse_bytes",
+        argNames: ["that", "data", "options"],
+      );
+
+  @override
+  int crateApiUsvgFontDatabaseRegisterFontData({
+    required UsvgFontDatabase that,
+    required String key,
+    required List<int> data,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+            that,
+            serializer,
+          );
+          sse_encode_String(key, serializer);
+          sse_encode_list_prim_u_8_loose(data, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_u_32,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiUsvgFontDatabaseRegisterFontDataConstMeta,
+        argValues: [that, key, data],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiUsvgFontDatabaseRegisterFontDataConstMeta =>
+      const TaskConstMeta(
+        debugName: "UsvgFontDatabase_register_font_data",
+        argNames: ["that", "key", "data"],
+      );
+
+  @override
   ParseOptions crateApiParseOptionsDefault() {
     return handler.executeSync(
       SyncTask(
         callFfi: () {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_parse_options,
@@ -287,6 +483,14 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
   get rust_arc_decrement_strong_count_SvgTree => wire
       .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSvgTree;
 
+  RustArcIncrementStrongCountFnType
+  get rust_arc_increment_strong_count_UsvgFontDatabase => wire
+      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase;
+
+  RustArcDecrementStrongCountFnType
+  get rust_arc_decrement_strong_count_UsvgFontDatabase => wire
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase;
+
   @protected
   SvgTree
   dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSvgTree(
@@ -294,6 +498,15 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
   ) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return SvgTreeImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  UsvgFontDatabase
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return UsvgFontDatabaseImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -306,12 +519,30 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
   }
 
   @protected
+  UsvgFontDatabase
+  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return UsvgFontDatabaseImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
   SvgTree
   dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSvgTree(
     dynamic raw,
   ) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return SvgTreeImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  UsvgFontDatabase
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return UsvgFontDatabaseImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -405,6 +636,12 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
   }
 
   @protected
+  int dco_decode_u_32(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as int;
+  }
+
+  @protected
   int dco_decode_u_8(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as int;
@@ -435,6 +672,18 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
   }
 
   @protected
+  UsvgFontDatabase
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return UsvgFontDatabaseImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
   SvgTree
   sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSvgTree(
     SseDeserializer deserializer,
@@ -447,12 +696,36 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
   }
 
   @protected
+  UsvgFontDatabase
+  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return UsvgFontDatabaseImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
   SvgTree
   sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSvgTree(
     SseDeserializer deserializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return SvgTreeImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
+  UsvgFontDatabase
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return UsvgFontDatabaseImpl.frbInternalSseDecode(
       sse_decode_usize(deserializer),
       sse_decode_i_32(deserializer),
     );
@@ -581,6 +854,12 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
   }
 
   @protected
+  int sse_decode_u_32(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getUint32();
+  }
+
+  @protected
   int sse_decode_u_8(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getUint8();
@@ -618,6 +897,19 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
 
   @protected
   void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+    UsvgFontDatabase self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as UsvgFontDatabaseImpl).frbInternalSseEncode(move: true),
+      serializer,
+    );
+  }
+
+  @protected
+  void
   sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSvgTree(
     SvgTree self,
     SseSerializer serializer,
@@ -631,6 +923,19 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
 
   @protected
   void
+  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+    UsvgFontDatabase self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as UsvgFontDatabaseImpl).frbInternalSseEncode(move: false),
+      serializer,
+    );
+  }
+
+  @protected
+  void
   sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSvgTree(
     SvgTree self,
     SseSerializer serializer,
@@ -638,6 +943,19 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_usize(
       (self as SvgTreeImpl).frbInternalSseEncode(move: null),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerUsvgFontDatabase(
+    UsvgFontDatabase self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as UsvgFontDatabaseImpl).frbInternalSseEncode(move: null),
       serializer,
     );
   }
@@ -756,6 +1074,12 @@ class UsvgRustLibGeneratedApiImpl extends UsvgRustLibGeneratedApiImplPlatform
   }
 
   @protected
+  void sse_encode_u_32(int self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putUint32(self);
+  }
+
+  @protected
   void sse_encode_u_8(int self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putUint8(self);
@@ -820,4 +1144,64 @@ class SvgTreeImpl extends RustOpaque implements SvgTree {
       .instance
       .api
       .crateApiSvgTreeToSvgString(that: this, preserveText: preserveText);
+}
+
+@sealed
+class UsvgFontDatabaseImpl extends RustOpaque implements UsvgFontDatabase {
+  // Not to be used by end users
+  UsvgFontDatabaseImpl.frbInternalDcoDecode(List<dynamic> wire)
+    : super.frbInternalDcoDecode(wire, _kStaticData);
+
+  // Not to be used by end users
+  UsvgFontDatabaseImpl.frbInternalSseDecode(
+    BigInt ptr,
+    int externalSizeOnNative,
+  ) : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+  static final _kStaticData = RustArcStaticData(
+    rustArcIncrementStrongCount: UsvgRustLibGenerated
+        .instance
+        .api
+        .rust_arc_increment_strong_count_UsvgFontDatabase,
+    rustArcDecrementStrongCount: UsvgRustLibGenerated
+        .instance
+        .api
+        .rust_arc_decrement_strong_count_UsvgFontDatabase,
+    rustArcDecrementStrongCountPtr: UsvgRustLibGenerated
+        .instance
+        .api
+        .rust_arc_decrement_strong_count_UsvgFontDatabasePtr,
+  );
+
+  /// Returns the number of font faces currently available.
+  int get faceCount => UsvgRustLibGenerated.instance.api
+      .crateApiUsvgFontDatabaseFaceCount(that: this);
+
+  /// Parses SVG text using a snapshot of this database.
+  SvgTree parse({required String svg, ParseOptions? options}) =>
+      UsvgRustLibGenerated.instance.api.crateApiUsvgFontDatabaseParse(
+        that: this,
+        svg: svg,
+        options: options,
+      );
+
+  /// Parses SVG bytes using a snapshot of this database.
+  SvgTree parseBytes({required List<int> data, ParseOptions? options}) =>
+      UsvgRustLibGenerated.instance.api.crateApiUsvgFontDatabaseParseBytes(
+        that: this,
+        data: data,
+        options: options,
+      );
+
+  /// Registers font bytes once for the supplied stable key.
+  ///
+  /// Returns the number of newly loaded font faces. Invalid font data
+  /// returns zero and is not remembered, so callers may retry the key.
+  int registerFontData({required String key, required List<int> data}) =>
+      UsvgRustLibGenerated.instance.api
+          .crateApiUsvgFontDatabaseRegisterFontData(
+            that: this,
+            key: key,
+            data: data,
+          );
 }

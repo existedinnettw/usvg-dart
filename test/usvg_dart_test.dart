@@ -93,6 +93,40 @@ void main() {
     expect(withFont, contains('<text'));
     expect(withFont, contains('Tinos text'));
   });
+
+  test('persistent font database reuses registered fonts', () async {
+    final font = await loadTinosFontData();
+    if (font == null) return;
+
+    final database = UsvgFontDatabase(loadSystemFonts: false);
+    expect(
+      database.registerFontData(key: 'tinos-regular', data: font),
+      greaterThan(0),
+    );
+    final faceCount = database.faceCount;
+    expect(database.registerFontData(key: 'tinos-regular', data: font), 0);
+    expect(database.faceCount, faceCount);
+
+    const svg =
+        '<svg width="100" height="30">'
+        '<text x="0" y="20" font-family="Tinos">Tinos text</text>'
+        '</svg>';
+    final first = database
+        .parse(svg: svg, options: _optionsWithFontData([]))
+        .toSvgString(preserveText: true);
+    final second = database
+        .parse(svg: svg, options: _optionsWithFontData([]))
+        .toSvgString(preserveText: true);
+
+    expect(first, contains('<text'));
+    expect(second, contains('<text'));
+  });
+
+  test('persistent font database rejects invalid font data', () {
+    final database = UsvgFontDatabase(loadSystemFonts: false);
+    expect(database.registerFontData(key: 'invalid', data: [1, 2, 3]), 0);
+    expect(database.faceCount, 0);
+  });
 }
 
 ParseOptions _optionsWithFontData(List<Uint8List> fontData) {

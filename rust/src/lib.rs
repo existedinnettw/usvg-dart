@@ -1,11 +1,11 @@
 mod api;
 mod frb_generated;
 
-use std::ffi::{c_char, CString};
+use std::ffi::{CString, c_char};
 use std::sync::OnceLock;
 
 #[cfg(unix)]
-use std::ffi::{c_void, CStr};
+use std::ffi::{CStr, c_void};
 
 #[unsafe(no_mangle)]
 pub extern "C" fn usvg_dart_library_path() -> *const c_char {
@@ -26,8 +26,8 @@ fn library_path() -> CString {
 #[cfg(windows)]
 fn library_path() -> CString {
     use windows_sys::Win32::System::LibraryLoader::{
-        GetModuleFileNameW, GetModuleHandleExW, GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
-        GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+        GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+        GetModuleFileNameW, GetModuleHandleExW,
     };
 
     let mut module = std::ptr::null_mut();

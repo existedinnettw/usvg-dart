@@ -1,5 +1,6 @@
+use std::collections::HashSet;
 use std::path::PathBuf;
-use std::sync::{Arc, OnceLock};
+use std::sync::{Arc, Mutex, OnceLock};
 
 use flutter_rust_bridge::frb;
 
@@ -40,6 +41,16 @@ impl Default for ParseOptions {
     }
 }
 
+// TODO: [usvg::Options](https://docs.rs/usvg/latest/usvg/struct.Options.html)
+// usvg::Options is not Send + Sync, so we can't expose it directly. We 
+// could consider implementing Send + Sync manually if we can guarantee that the 
+// font database is only mutated during parsing, but that would require more 
+// careful synchronization and testing. For now, we can expose the most commonly 
+// used options through our own ParseOptions struct and convert it to 
+// usvg::Options internally. We can always add more options later if needed.
+// TODO: [usvg::WriteOptions](https://docs.rs/usvg/latest/usvg/struct.WriteOptions.html)
+// TODO: [usvg::FontResolver](https://docs.rs/usvg/latest/usvg/struct.FontResolver.html)
+
 #[derive(Clone, Copy, Debug)]
 /// The intrinsic dimensions of a parsed SVG tree.
 pub struct SvgSize {
@@ -55,6 +66,86 @@ pub struct SvgTree {
     tree: usvg::Tree,
 }
 
+#[derive(Debug)]
+struct FontDatabaseState {
+    database: usvg::fontdb::Database,
+    keys: HashSet<String>,
+}
+
+#[frb(opaque)]
+/// A persistent font database that can be shared across SVG parses.
+/// [usvg::fontdb](https://docs.rs/usvg/latest/usvg/index.html#reexport.fontdb)
+pub struct UsvgFontDatabase {
+    state: Mutex<FontDatabaseState>,
+}
+
+impl UsvgFontDatabase {
+    #[frb(sync)]
+    /// Creates an empty database, optionally initialized with system fonts.
+    pub fn new(load_system_fonts: bool) -> Self {
+        let mut database = usvg::fontdb::Database::new();
+        if load_system_fonts {
+            database.load_system_fonts();
+        }
+        Self {
+            state: Mutex::new(FontDatabaseState {
+                database,
+                keys: HashSet::new(),
+            }),
+        }
+    }
+
+    #[frb(sync)]
+    /// Registers font bytes once for the supplied stable key.
+    ///
+    /// Returns the number of newly loaded font faces. Invalid font data
+    /// returns zero and is not remembered, so callers may retry the key.
+    pub fn register_font_data(&self, key: String, data: Vec<u8>) -> Result<u32, String> {
+        let mut state = self.state.lock().map_err(|error| error.to_string())?;
+        if state.keys.contains(&key) {
+            return Ok(0);
+        }
+
+        let previous_count = state.database.len();
+        state.database.load_font_data(data);
+        let loaded_count = state.database.len() - previous_count;
+        if loaded_count > 0 {
+            state.keys.insert(key);
+        }
+        Ok(loaded_count as u32)
+    }
+
+    #[frb(sync, getter)]
+    /// Returns the number of font faces currently available.
+    pub fn face_count(&self) -> Result<u32, String> {
+        self.state
+            .lock()
+            .map(|state| state.database.len() as u32)
+            .map_err(|error| error.to_string())
+    }
+
+    #[frb(sync)]
+    /// Parses SVG text using a snapshot of this database.
+    pub fn parse(&self, svg: String, options: Option<ParseOptions>) -> Result<SvgTree, String> {
+        self.parse_bytes(svg.into_bytes(), options)
+    }
+
+    #[frb(sync)]
+    /// Parses SVG bytes using a snapshot of this database.
+    pub fn parse_bytes(
+        &self,
+        data: Vec<u8>,
+        options: Option<ParseOptions>,
+    ) -> Result<SvgTree, String> {
+        let database = self
+            .state
+            .lock()
+            .map(|state| state.database.clone())
+            .map_err(|error| error.to_string())?;
+        parse_tree(data, options, Some(database))
+    }
+}
+
 impl SvgTree {
     #[frb(sync)]
     /// Parses SVG text into a normalized tree.
@@ -65,10 +156,7 @@ impl SvgTree {
     #[frb(sync)]
     /// Parses SVG bytes into a normalized tree.
     pub fn parse_bytes(data: Vec<u8>, options: Option<ParseOptions>) -> Result<Self, String> {
-        let options = to_usvg_options(options.unwrap_or_default());
-        usvg::Tree::from_data(&data, &options)
-            .map(|tree| Self { tree })
-            .map_err(|error| error.to_string())
+        parse_tree(data, options, None)
     }
 
     #[frb(sync, getter)]
@@ -100,7 +188,21 @@ impl SvgTree {
     }
 }
 
-fn to_usvg_options(options: ParseOptions) -> usvg::Options<'static> {
+fn parse_tree(
+    data: Vec<u8>,
+    options: Option<ParseOptions>,
+    database: Option<usvg::fontdb::Database>,
+) -> Result<SvgTree, String> {
+    let options = to_usvg_options(options.unwrap_or_default(), database);
+    usvg::Tree::from_data(&data, &options)
+        .map(|tree| SvgTree { tree })
+        .map_err(|error| error.to_string())
+}
+
+fn to_usvg_options(
+    options: ParseOptions,
+    database: Option<usvg::fontdb::Database>,
+) -> usvg::Options<'static> {
     let mut result = usvg::Options::default();
     result.resources_dir = options.resources_dir.map(PathBuf::from);
     result.dpi = options.dpi;
@@ -108,7 +210,9 @@ fn to_usvg_options(options: ParseOptions) -> usvg::Options<'static> {
     result.font_size = options.font_size;
     result.languages = options.languages;
     result.style_sheet = options.style_sheet;
-    if options.load_system_fonts {
+    if let Some(database) = database {
+        result.fontdb = Arc::new(database);
+    } else if options.load_system_fonts {
         result.fontdb = system_font_database();
     }
     for font_data in options.font_data {

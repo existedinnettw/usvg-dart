@@ -6,8 +6,9 @@
 import 'frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `system_font_database`, `to_usvg_options`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`
+// These functions are ignored because they are not marked as `pub`: `parse_tree`, `system_font_database`, `to_usvg_options`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `FontDatabaseState`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`, `fmt`
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<SvgTree>>
 abstract class SvgTree implements RustOpaqueInterface {
@@ -36,6 +37,30 @@ abstract class SvgTree implements RustOpaqueInterface {
   /// When enabled, successfully parsed text is serialized as text elements
   /// instead of paths. Fonts are still required while parsing.
   String toSvgString({bool preserveText = false});
+}
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<UsvgFontDatabase>>
+abstract class UsvgFontDatabase implements RustOpaqueInterface {
+  /// Returns the number of font faces currently available.
+  int get faceCount;
+
+  /// Creates an empty database, optionally initialized with system fonts.
+  factory UsvgFontDatabase({required bool loadSystemFonts}) =>
+      UsvgRustLibGenerated.instance.api.crateApiUsvgFontDatabaseNew(
+        loadSystemFonts: loadSystemFonts,
+      );
+
+  /// Parses SVG text using a snapshot of this database.
+  SvgTree parse({required String svg, ParseOptions? options});
+
+  /// Parses SVG bytes using a snapshot of this database.
+  SvgTree parseBytes({required List<int> data, ParseOptions? options});
+
+  /// Registers font bytes once for the supplied stable key.
+  ///
+  /// Returns the number of newly loaded font faces. Invalid font data
+  /// returns zero and is not remembered, so callers may retry the key.
+  int registerFontData({required String key, required List<int> data});
 }
 
 /// Options controlling how usvg parses and resolves an SVG document.
