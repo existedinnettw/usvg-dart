@@ -6,10 +6,16 @@ import 'package:web/web.dart' as web;
 String? get systemFontFamily => null;
 
 Future<Uint8List> loadTinosFontData() async {
-  final url = Uri.base.resolve('fonts/Tinos-Regular.ttf').toString();
+  return _loadFont('Tinos-Regular.ttf');
+}
+
+Future<Uint8List> loadRobotoWoff2Data() => _loadFont('Roboto-Hello.woff2');
+
+Future<Uint8List> _loadFont(String name) async {
+  final url = Uri.base.resolve('fonts/$name').toString();
   final response = await web.window.fetch(url.toJS).toDart;
   if (!response.ok) {
-    throw StateError('Failed to load Tinos test font: ${response.status}');
+    throw StateError('Failed to load $name test font: ${response.status}');
   }
 
   return (await response.arrayBuffer().toDart).toDart.asUint8List();

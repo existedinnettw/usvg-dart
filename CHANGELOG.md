@@ -2,6 +2,8 @@
 
 - Add `preserveText` to `SvgTree.toSvgString()` for serializing parsed text as
   SVG text elements instead of paths.
+- Add a persistent `UsvgFontDatabase` for registering dynamic font bytes once
+  and reusing them across SVG parses.
 
 ## 1.0.2
 
