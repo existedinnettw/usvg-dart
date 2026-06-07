@@ -6,7 +6,7 @@
 import 'frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `to_usvg_options`
+// These functions are ignored because they are not marked as `pub`: `system_font_database`, `to_usvg_options`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<SvgTree>>
@@ -32,7 +32,10 @@ abstract class SvgTree implements RustOpaqueInterface {
   SvgSize get size;
 
   /// Serializes the normalized tree as SVG text.
-  String toSvgString();
+  ///
+  /// When enabled, successfully parsed text is serialized as text elements
+  /// instead of paths. Fonts are still required while parsing.
+  String toSvgString({bool preserveText = false});
 }
 
 /// Options controlling how usvg parses and resolves an SVG document.
@@ -55,6 +58,12 @@ class ParseOptions {
   /// Additional CSS applied while parsing the SVG.
   final String? styleSheet;
 
+  /// Whether to load fonts installed on the host operating system.
+  final bool loadSystemFonts;
+
+  /// Font files to load into usvg's in-memory font database.
+  final List<Uint8List> fontData;
+
   const ParseOptions({
     this.resourcesDir,
     required this.dpi,
@@ -62,6 +71,8 @@ class ParseOptions {
     required this.fontSize,
     required this.languages,
     this.styleSheet,
+    required this.loadSystemFonts,
+    required this.fontData,
   });
 
   static ParseOptions default_() =>
@@ -74,7 +85,9 @@ class ParseOptions {
       fontFamily.hashCode ^
       fontSize.hashCode ^
       languages.hashCode ^
-      styleSheet.hashCode;
+      styleSheet.hashCode ^
+      loadSystemFonts.hashCode ^
+      fontData.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -86,7 +99,9 @@ class ParseOptions {
           fontFamily == other.fontFamily &&
           fontSize == other.fontSize &&
           languages == other.languages &&
-          styleSheet == other.styleSheet;
+          styleSheet == other.styleSheet &&
+          loadSystemFonts == other.loadSystemFonts &&
+          fontData == other.fontData;
 }
 
 /// The intrinsic dimensions of a parsed SVG tree.

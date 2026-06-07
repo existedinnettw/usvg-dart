@@ -1,3 +1,8 @@
+## Unreleased
+
+- Add `preserveText` to `SvgTree.toSvgString()` for serializing parsed text as
+  SVG text elements instead of paths.
+
 ## 1.0.2
 
 - Remove the web cross-origin isolation and `SharedArrayBuffer` requirement.

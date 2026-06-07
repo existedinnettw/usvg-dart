@@ -226,6 +226,7 @@ fn wire__crate__api__SvgTree_to_svg_string_impl(
             let api_that = <RustOpaqueMoi<
                 flutter_rust_bridge::for_generated::RustAutoOpaqueInner<SvgTree>,
             >>::sse_decode(&mut deserializer);
+            let api_preserve_text = <bool>::sse_decode(&mut deserializer);
             deserializer.end();
             transform_result_sse::<_, ()>((move || {
                 let mut api_that_guard = None;
@@ -242,8 +243,10 @@ fn wire__crate__api__SvgTree_to_svg_string_impl(
                     }
                 }
                 let api_that_guard = api_that_guard.unwrap();
-                let output_ok =
-                    Result::<_, ()>::Ok(crate::api::SvgTree::to_svg_string(&*api_that_guard))?;
+                let output_ok = Result::<_, ()>::Ok(crate::api::SvgTree::to_svg_string(
+                    &*api_that_guard,
+                    api_preserve_text,
+                ))?;
                 Ok(output_ok)
             })())
         },
@@ -339,6 +342,18 @@ impl SseDecode for Vec<String> {
     }
 }
 
+impl SseDecode for Vec<Vec<u8>> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<Vec<u8>>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
 impl SseDecode for Vec<u8> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -382,6 +397,8 @@ impl SseDecode for crate::api::ParseOptions {
         let mut var_fontSize = <f32>::sse_decode(deserializer);
         let mut var_languages = <Vec<String>>::sse_decode(deserializer);
         let mut var_styleSheet = <Option<String>>::sse_decode(deserializer);
+        let mut var_loadSystemFonts = <bool>::sse_decode(deserializer);
+        let mut var_fontData = <Vec<Vec<u8>>>::sse_decode(deserializer);
         return crate::api::ParseOptions {
             resources_dir: var_resourcesDir,
             dpi: var_dpi,
@@ -389,6 +406,8 @@ impl SseDecode for crate::api::ParseOptions {
             font_size: var_fontSize,
             languages: var_languages,
             style_sheet: var_styleSheet,
+            load_system_fonts: var_loadSystemFonts,
+            font_data: var_fontData,
         };
     }
 }
@@ -489,6 +508,8 @@ impl flutter_rust_bridge::IntoDart for crate::api::ParseOptions {
             self.font_size.into_into_dart().into_dart(),
             self.languages.into_into_dart().into_dart(),
             self.style_sheet.into_into_dart().into_dart(),
+            self.load_system_fonts.into_into_dart().into_dart(),
+            self.font_data.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -563,6 +584,16 @@ impl SseEncode for Vec<String> {
     }
 }
 
+impl SseEncode for Vec<Vec<u8>> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <Vec<u8>>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Vec<u8> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -602,6 +633,8 @@ impl SseEncode for crate::api::ParseOptions {
         <f32>::sse_encode(self.font_size, serializer);
         <Vec<String>>::sse_encode(self.languages, serializer);
         <Option<String>>::sse_encode(self.style_sheet, serializer);
+        <bool>::sse_encode(self.load_system_fonts, serializer);
+        <Vec<Vec<u8>>>::sse_encode(self.font_data, serializer);
     }
 }
 

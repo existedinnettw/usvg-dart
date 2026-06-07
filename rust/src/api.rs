@@ -1,4 +1,5 @@
 use std::path::PathBuf;
+use std::sync::{Arc, OnceLock};
 
 use flutter_rust_bridge::frb;
 
@@ -17,6 +18,10 @@ pub struct ParseOptions {
     pub languages: Vec<String>,
     /// Additional CSS applied while parsing the SVG.
     pub style_sheet: Option<String>,
+    /// Whether to load fonts installed on the host operating system.
+    pub load_system_fonts: bool,
+    /// Font files to load into usvg's in-memory font database.
+    pub font_data: Vec<Vec<u8>>,
 }
 
 impl Default for ParseOptions {
@@ -29,6 +34,8 @@ impl Default for ParseOptions {
             font_size: 12.0,
             languages: vec!["en".to_owned()],
             style_sheet: None,
+            load_system_fonts: true,
+            font_data: Vec::new(),
         }
     }
 }
@@ -82,8 +89,14 @@ impl SvgTree {
 
     #[frb(sync)]
     /// Serializes the normalized tree as SVG text.
-    pub fn to_svg_string(&self) -> String {
-        self.tree.to_string(&usvg::WriteOptions::default())
+    ///
+    /// When enabled, successfully parsed text is serialized as text elements
+    /// instead of paths. Fonts are still required while parsing.
+    pub fn to_svg_string(&self, #[frb(default = false)] preserve_text: bool) -> String {
+        self.tree.to_string(&usvg::WriteOptions {
+            preserve_text,
+            ..usvg::WriteOptions::default()
+        })
     }
 }
 
@@ -95,5 +108,22 @@ fn to_usvg_options(options: ParseOptions) -> usvg::Options<'static> {
     result.font_size = options.font_size;
     result.languages = options.languages;
     result.style_sheet = options.style_sheet;
+    if options.load_system_fonts {
+        result.fontdb = system_font_database();
+    }
+    for font_data in options.font_data {
+        result.fontdb_mut().load_font_data(font_data);
+    }
     result
+}
+
+fn system_font_database() -> Arc<usvg::fontdb::Database> {
+    static SYSTEM_FONTS: OnceLock<Arc<usvg::fontdb::Database>> = OnceLock::new();
+    SYSTEM_FONTS
+        .get_or_init(|| {
+            let mut database = usvg::fontdb::Database::new();
+            database.load_system_fonts();
+            Arc::new(database)
+        })
+        .clone()
 }

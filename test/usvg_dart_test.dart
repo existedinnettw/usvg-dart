@@ -1,5 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:test/test.dart';
 import 'package:usvg_dart/usvg_dart.dart';
+
+import 'font_test_data.dart';
 
 void main() {
   setUpAll(UsvgRustLib.init);
@@ -36,4 +40,71 @@ void main() {
     expect(normalized, isNot(contains('<svg x=')));
     expect(normalized, contains('transform="matrix(1 0 0 1 10 20)"'));
   });
+
+  test('normalizes text with system fonts', () {
+    if (systemFontFamily == null) return;
+
+    final tree = SvgTree.parse(
+      svg:
+          '<svg width="100" height="30">'
+          '<text x="0" y="20" font-family="$systemFontFamily">Text</text>'
+          '</svg>',
+    );
+
+    final normalized = tree.toSvgString();
+    expect(normalized, contains('<path'));
+    expect(normalized, isNot(contains('<text')));
+  });
+
+  test('preserves text during serialization when requested', () {
+    if (systemFontFamily == null) return;
+
+    final tree = SvgTree.parse(
+      svg:
+          '<svg width="100" height="30">'
+          '<text x="0" y="20" font-family="$systemFontFamily">Text</text>'
+          '</svg>',
+    );
+
+    final normalized = tree.toSvgString(preserveText: true);
+    expect(normalized, contains('<text'));
+    expect(normalized, contains('Text'));
+  });
+
+  test('preserves text loaded from caller-provided font data', () async {
+    final font = await loadTinosFontData();
+    if (font == null) return;
+
+    const svg =
+        '<svg width="100" height="30">'
+        '<text x="0" y="20" font-family="Tinos">Tinos text</text>'
+        '</svg>';
+
+    final withoutFont = SvgTree.parse(
+      svg: svg,
+      options: _optionsWithFontData([]),
+    ).toSvgString(preserveText: true);
+    expect(withoutFont, isNot(contains('<text')));
+
+    final withFont = SvgTree.parse(
+      svg: svg,
+      options: _optionsWithFontData([font]),
+    ).toSvgString(preserveText: true);
+    expect(withFont, contains('<text'));
+    expect(withFont, contains('Tinos text'));
+  });
+}
+
+ParseOptions _optionsWithFontData(List<Uint8List> fontData) {
+  final defaults = ParseOptions.default_();
+  return ParseOptions(
+    resourcesDir: defaults.resourcesDir,
+    dpi: defaults.dpi,
+    fontFamily: defaults.fontFamily,
+    fontSize: defaults.fontSize,
+    languages: defaults.languages,
+    styleSheet: defaults.styleSheet,
+    loadSystemFonts: false,
+    fontData: fontData,
+  );
 }
