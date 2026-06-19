@@ -40,7 +40,7 @@ jobs:
 
     steps:
       - name: Check out package
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Verify tag and package version
         env:
@@ -77,7 +77,7 @@ jobs:
 
     steps:
       - name: Check out package
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up Dart
         uses: dart-lang/setup-dart@v1
