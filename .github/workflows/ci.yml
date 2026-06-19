@@ -31,7 +31,7 @@ jobs:
 
     steps:
       - name: Check out usvg-dart
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           path: usvg-dart
 
@@ -92,7 +92,7 @@ jobs:
 
     steps:
       - name: Check out usvg-dart
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           path: usvg-dart
 
